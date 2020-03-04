@@ -1,27 +1,31 @@
 package com.rasse.mongodemoservice.domen;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
-@NoArgsConstructor
+@Document(collection = "attributes")
 public class Attribute {
-    private String param;
-    private String param1;
-    private String param2;
 
-    public Attribute(String param) {
-        this.param = param;
+    @Id
+    private String id;
+
+    @Indexed
+    private String name;
+
+    private Map<String, Object> params;
+
+    public void putParam(String name, Object value) {
+        this.params.put(name, value);
     }
 
-    public Attribute(String param, String param1) {
-        this.param = param;
-        this.param1 = param1;
-    }
-
-    public Attribute(String param, String param1, String param2) {
-        this.param = param;
-        this.param1 = param1;
-        this.param2 = param2;
+    public Attribute() {
+        this.params = new HashMap<>();
     }
 }

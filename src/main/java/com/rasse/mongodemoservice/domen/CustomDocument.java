@@ -1,13 +1,15 @@
 package com.rasse.mongodemoservice.domen;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
-@NoArgsConstructor
 @Document(collection = "documents")
 public class CustomDocument {
 
@@ -16,14 +18,19 @@ public class CustomDocument {
 
     private BaseDocument document;
 
-    private Attribute attribute;
+    @DBRef(lazy = true)
+    private List<Attribute> attributes;
 
     @DBRef
     private Owner owner;
 
-    public CustomDocument(BaseDocument document, Attribute attribute, Owner owner) {
+    public CustomDocument() {
+        this.attributes = new ArrayList<>();
+    }
+
+    public CustomDocument(BaseDocument document, List<Attribute> attributes, Owner owner) {
         this.document = document;
-        this.attribute = attribute;
+        this.attributes = attributes;
         this.owner = owner;
     }
 }

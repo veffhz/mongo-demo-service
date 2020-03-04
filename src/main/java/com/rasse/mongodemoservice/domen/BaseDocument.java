@@ -12,7 +12,8 @@ public class BaseDocument {
     private String title;
     private LocalDateTime birthDate;
 
-    public BaseDocument(String title, LocalDateTime now) {
-
+    public BaseDocument(String title, LocalDateTime birthDate) {
+        this.title = title;
+        this.birthDate = birthDate;
     }
 }
