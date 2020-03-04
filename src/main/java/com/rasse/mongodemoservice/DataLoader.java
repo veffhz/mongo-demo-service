@@ -8,6 +8,7 @@ import com.rasse.mongodemoservice.domen.BaseDocument;
 import com.rasse.mongodemoservice.domen.CustomDocument;
 import com.rasse.mongodemoservice.domen.Owner;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -19,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+@Slf4j
 @Component
 public class DataLoader implements ApplicationRunner {
 
@@ -37,6 +39,11 @@ public class DataLoader implements ApplicationRunner {
     }
 
     public void run(ApplicationArguments args) {
+
+        if (documentRepository.count() > 0) {
+            log.info("Data already exist! Skip");
+            return;
+        }
 
         Owner owner = new Owner("Test 1", "Test 1");
         Owner owner2 = new Owner("Test 2", "Test 2");
