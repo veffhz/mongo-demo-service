@@ -40,7 +40,7 @@ public class DataLoader implements ApplicationRunner {
 
     public void run(ApplicationArguments args) {
 
-        if (documentRepository.count() > 0) {
+        if (attributeRepository.count() > 0) {
             log.info("Data already exist! Skip");
             return;
         }
