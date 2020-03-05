@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface CmisService {
     Folder getRootFolder();
-    Folder getFolder(String path);
+    Folder getFolder();
     Document getDocument(String name);
     Document createDocument(Folder folder, String name, String contentType, byte[] content);
     ObjectId updateDocument(Folder folder, String name, String contentType, byte[] content, String id);

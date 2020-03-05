@@ -35,6 +35,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class CmisServiceImpl implements CmisService {
 
+    private static final String FOLDER = "Documents";
+
     private final String alfrescoUrl;
     private final String alfrescoUser;
     private final String alfrescoPass;
@@ -65,6 +67,14 @@ public class CmisServiceImpl implements CmisService {
 
         SessionFactory factory = SessionFactoryImpl.newInstance();
         session = factory.getRepositories(parameter).get(0).createSession();
+
+        if (!session.existsPath(String.format("/%s", FOLDER))) {
+            Map<String, Object> properties = new HashMap<>();
+            properties.put(PropertyIds.NAME, FOLDER);
+            properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder");
+
+            session.getRootFolder().createFolder(properties);
+        }
     }
 
     @Override
@@ -73,8 +83,8 @@ public class CmisServiceImpl implements CmisService {
     }
 
     @Override
-    public Folder getFolder(String path) {
-        CmisObject folder = session.getObjectByPath(String.format("/%s", path));
+    public Folder getFolder() {
+        CmisObject folder = session.getObjectByPath(String.format("/%s", FOLDER));
         if (folder instanceof Folder) {
             return (Folder) folder;
         } else {

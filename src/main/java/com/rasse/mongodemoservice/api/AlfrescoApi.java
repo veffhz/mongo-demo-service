@@ -36,7 +36,7 @@ public class AlfrescoApi {
     @GetMapping("/api/doc")
     public List<Map<String, String>> getAll() {
         log.info("get all docs");
-        Folder docsFolder = cmisService.getFolder("Documents");
+        Folder docsFolder = cmisService.getFolder();
         return cmisService.getCmisObjects(docsFolder);
     }
 
@@ -65,7 +65,7 @@ public class AlfrescoApi {
     public String create(@RequestBody MultipartFile file) throws IOException {
         String name = file.getOriginalFilename();
         log.info("create doc {}", name);
-        Folder rootFolder = cmisService.getFolder("Documents");
+        Folder rootFolder = cmisService.getFolder();
         String contentType = file.getContentType();
         Document document = cmisService.createDocument(rootFolder, name, contentType, file.getBytes());
         return document.getId();
@@ -76,7 +76,7 @@ public class AlfrescoApi {
     public ObjectId update(@RequestParam(value="id")String id, @RequestBody MultipartFile file) throws IOException {
         String name = file.getOriginalFilename();
         log.info("update doc id {} {}", id, name);
-        Folder rootFolder = cmisService.getFolder("Documents");
+        Folder rootFolder = cmisService.getFolder();
         String contentType = file.getContentType();
         return cmisService.updateDocument(rootFolder, name, contentType, file.getBytes(), id);
     }
