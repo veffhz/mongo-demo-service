@@ -10,7 +10,9 @@ public interface CmisService {
     Folder getFolder(String path);
     Document getDocument(String name);
     Document createDocument(Folder folder, String name, String contentType, byte[] content);
+    ObjectId updateDocument(Folder folder, String name, String contentType, byte[] content, String id);
     void remove(String name);
     List<Document> getDocuments(Folder folder);
     List<Map<String, String>> getCmisObjects(Folder folder);
+    List<Map<String, String>> getVersionsCmisObjects(String id);
 }

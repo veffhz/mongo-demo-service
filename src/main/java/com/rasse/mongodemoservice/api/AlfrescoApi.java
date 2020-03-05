@@ -40,6 +40,13 @@ public class AlfrescoApi {
         return cmisService.getCmisObjects(docsFolder);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/api/doc/version/{id}")
+    public List<Map<String, String>> getAllVersion(@PathVariable String id) {
+        log.info("get all version");
+        return cmisService.getVersionsCmisObjects(id);
+    }
+
     @GetMapping("/api/doc/{id}")
     public ResponseEntity<Resource> getById(@PathVariable String id) {
         log.info("get owner by id {}", id);
@@ -62,6 +69,16 @@ public class AlfrescoApi {
         String contentType = file.getContentType();
         Document document = cmisService.createDocument(rootFolder, name, contentType, file.getBytes());
         return document.getId();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/api/doc")
+    public ObjectId update(@RequestParam(value="id")String id, @RequestBody MultipartFile file) throws IOException {
+        String name = file.getOriginalFilename();
+        log.info("update doc id {} {}", id, name);
+        Folder rootFolder = cmisService.getFolder("Documents");
+        String contentType = file.getContentType();
+        return cmisService.updateDocument(rootFolder, name, contentType, file.getBytes(), id);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

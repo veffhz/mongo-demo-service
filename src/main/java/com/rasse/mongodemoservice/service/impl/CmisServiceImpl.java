@@ -106,6 +106,24 @@ public class CmisServiceImpl implements CmisService {
     }
 
     @Override
+    public ObjectId updateDocument(Folder folder, String name, String contentType, byte[] content, String id) {
+        Document document = getDocument(id);
+
+        ObjectId pwcId = document.checkOut();
+        Document pwc = (Document) session.getObject(pwcId);
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
+        properties.put(PropertyIds.NAME, name);
+
+        InputStream stream = new ByteArrayInputStream(content);
+        ContentStream contentStream = new ContentStreamImpl(name, BigInteger.valueOf(content.length),
+                contentType, stream);
+
+        return pwc.checkIn(true, properties, contentStream, "Added new version");
+    }
+
+    @Override
     public void remove(String name) {
         CmisObject object = session.getObject(name);
 
@@ -137,10 +155,27 @@ public class CmisServiceImpl implements CmisService {
         return result;
     }
 
+    @Override
+    public List<Map<String, String>> getVersionsCmisObjects(String id) {
+        List<Map<String, String>> result = new ArrayList<>();
+        cmisAllVersionObjects(id).forEach(obj -> {
+            Map<String, String> map = new HashMap<>();
+            map.put("id", obj.getId());
+            map.put("name", obj.getName());
+            map.put("createdBy", obj.getCreatedBy());
+            map.put("description", obj.getDescription());
+            result.add(map);
+        });
+        return result;
+    }
 
-    List<CmisObject> cmisObjects(Folder folder) {
+    private List<CmisObject> cmisObjects(Folder folder) {
         return StreamSupport.stream(folder.getChildren().spliterator(), false)
                 .collect(Collectors.toList());
+    }
+
+    private List<Document> cmisAllVersionObjects(String id) {
+        return getDocument(id).getAllVersions();
     }
 
 }
