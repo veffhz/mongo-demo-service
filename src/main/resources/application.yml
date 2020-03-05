@@ -1,6 +1,15 @@
+server:
+  port : 8081
+
 spring:
   main:
     banner-mode: "off"
   data:
     mongodb:
       database: archive
+
+alfresco:
+  repository:
+    url: http://localhost:8080/alfresco
+    user: admin
+    pass: admin
