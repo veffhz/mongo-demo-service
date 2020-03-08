@@ -62,7 +62,7 @@ public class AlfrescoApi {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/api/doc")
-    public String create(@RequestBody MultipartFile file) throws IOException {
+    public String create(@RequestParam("file") MultipartFile file) throws IOException {
         String name = file.getOriginalFilename();
         log.info("create doc {}", name);
         Folder rootFolder = cmisService.getFolder();
