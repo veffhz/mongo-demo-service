@@ -159,7 +159,7 @@ public class CmisServiceImpl implements CmisService {
 
     @Override
     public List<Document> getDocuments(Folder folder) {
-        return StreamSupport.stream(folder.getChildren().spliterator(), false)
+        return StreamSupport.stream(folder.getChildren().spliterator(), true)
                 .map(document -> (Document) document)
                 .collect(Collectors.toList());
     }
@@ -193,7 +193,7 @@ public class CmisServiceImpl implements CmisService {
     }
 
     private List<CmisObject> cmisObjects(Folder folder) {
-        return StreamSupport.stream(folder.getChildren().spliterator(), false)
+        return StreamSupport.stream(folder.getChildren().spliterator(), true)
                 .collect(Collectors.toList());
     }
 
