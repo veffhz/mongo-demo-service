@@ -62,23 +62,22 @@ public class AlfrescoApi {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/api/doc")
-    public String create(@RequestParam("file") MultipartFile file) throws IOException {
+    public String create(@RequestBody MultipartFile file) {
         String name = file.getOriginalFilename();
         log.info("create doc {}", name);
         Folder rootFolder = cmisService.getFolder();
         String contentType = file.getContentType();
-        Document document = cmisService.createDocument(rootFolder, name, contentType, file.getBytes());
+        Document document = cmisService.createDocument(rootFolder, name, file);
         return document.getId();
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/api/doc")
-    public ObjectId update(@RequestParam(value="id")String id, @RequestBody MultipartFile file) throws IOException {
+    public ObjectId update(@RequestParam(value="id")String id, @RequestBody MultipartFile file) {
         String name = file.getOriginalFilename();
         log.info("update doc id {} {}", id, name);
         Folder rootFolder = cmisService.getFolder();
-        String contentType = file.getContentType();
-        return cmisService.updateDocument(rootFolder, name, contentType, file.getBytes(), id);
+        return cmisService.updateDocument(rootFolder, name, file, id);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

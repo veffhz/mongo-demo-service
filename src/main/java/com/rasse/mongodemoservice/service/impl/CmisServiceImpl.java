@@ -1,6 +1,7 @@
 package com.rasse.mongodemoservice.service.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import javax.annotation.PostConstruct;
 
 import com.rasse.mongodemoservice.service.CmisService;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.chemistry.opencmis.client.api.*;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -27,11 +29,13 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * CMIS Service to handle operations within the session.
  *
  */
+@Slf4j
 @Service
 public class CmisServiceImpl implements CmisService {
 
@@ -88,6 +92,7 @@ public class CmisServiceImpl implements CmisService {
         if (folder instanceof Folder) {
             return (Folder) folder;
         } else {
+            log.error("Object is not a folder!");
             throw new IllegalArgumentException("Object is not a folder!");
         }
     }
@@ -103,20 +108,24 @@ public class CmisServiceImpl implements CmisService {
     }
 
     @Override
-    public Document createDocument(Folder folder, String name, String contentType, byte[] content) {
+    public Document createDocument(Folder folder, String name, MultipartFile content) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
         properties.put(PropertyIds.NAME, name);
 
-        InputStream stream = new ByteArrayInputStream(content);
-        ContentStream contentStream = new ContentStreamImpl(name, BigInteger.valueOf(content.length),
-                contentType, stream);
-
-        return folder.createDocument(properties, contentStream, VersioningState.MAJOR);
+        try {
+            ContentStream contentStream = new ContentStreamImpl(name,
+                    BigInteger.valueOf(content.getSize()),
+                    content.getContentType(), content.getInputStream());
+            return folder.createDocument(properties, contentStream, VersioningState.MAJOR);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     @Override
-    public ObjectId updateDocument(Folder folder, String name, String contentType, byte[] content, String id) {
+    public ObjectId updateDocument(Folder folder, String name, MultipartFile content, String id) {
         Document document = getDocument(id);
 
         ObjectId pwcId = document.checkOut();
@@ -126,11 +135,15 @@ public class CmisServiceImpl implements CmisService {
         properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
         properties.put(PropertyIds.NAME, name);
 
-        InputStream stream = new ByteArrayInputStream(content);
-        ContentStream contentStream = new ContentStreamImpl(name, BigInteger.valueOf(content.length),
-                contentType, stream);
-
-        return pwc.checkIn(true, properties, contentStream, "Added new version");
+        try {
+            ContentStream contentStream = new ContentStreamImpl(name,
+                    BigInteger.valueOf(content.getSize()),
+                    content.getContentType(), content.getInputStream());
+            return pwc.checkIn(true, properties, contentStream, "Added new version");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     @Override

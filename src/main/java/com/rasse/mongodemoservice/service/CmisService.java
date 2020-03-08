@@ -1,6 +1,7 @@
 package com.rasse.mongodemoservice.service;
 
 import org.apache.chemistry.opencmis.client.api.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -9,8 +10,8 @@ public interface CmisService {
     Folder getRootFolder();
     Folder getFolder();
     Document getDocument(String name);
-    Document createDocument(Folder folder, String name, String contentType, byte[] content);
-    ObjectId updateDocument(Folder folder, String name, String contentType, byte[] content, String id);
+    Document createDocument(Folder folder, String name, MultipartFile content);
+    ObjectId updateDocument(Folder folder, String name, MultipartFile content, String id);
     void remove(String name);
     List<Document> getDocuments(Folder folder);
     List<Map<String, String>> getCmisObjects(Folder folder);
