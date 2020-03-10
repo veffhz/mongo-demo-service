@@ -8,6 +8,7 @@ import java.util.Map;
 
 public interface CmisService {
     Folder getRootFolder();
+    long count(Folder folder);
     Folder getFolder();
     Document getDocument(String name);
     Document createDocument(Folder folder, String name, MultipartFile content);

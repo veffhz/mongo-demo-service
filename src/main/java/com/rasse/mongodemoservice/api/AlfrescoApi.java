@@ -40,6 +40,14 @@ public class AlfrescoApi {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/api/doc/count")
+    public Long getCount() {
+        log.info("get all docs count");
+        Folder docsFolder = cmisService.getFolder();
+        return cmisService.count(docsFolder);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/api/doc/version/{id}")
     public List<Map<String, String>> getAllVersion(@PathVariable String id) {
         log.info("get all version");
@@ -61,7 +69,7 @@ public class AlfrescoApi {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/api/doc/search")
-    public List<Map<String, String>> getByAttributeParam(@RequestParam(value="key") String name) {
+    public List<Map<String, String>> getDocumentsByName(@RequestParam(value="key") String name) {
         log.info("get docs by name {}", name);
         return cmisService.getDocumentsByName(name);
     }

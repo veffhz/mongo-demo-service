@@ -216,4 +216,8 @@ public class CmisServiceImpl implements CmisService {
         return getDocument(id).getAllVersions();
     }
 
+    public long count(Folder folder) {
+        return folder.getChildren().getTotalNumItems();
+    }
+
 }
