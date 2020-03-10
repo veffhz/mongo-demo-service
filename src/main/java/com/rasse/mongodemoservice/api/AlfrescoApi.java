@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +48,7 @@ public class AlfrescoApi {
 
     @GetMapping("/api/doc/{id}")
     public ResponseEntity<Resource> getById(@PathVariable String id) {
-        log.info("get owner by id {}", id);
+        log.info("get doc by id {}", id);
         Document document = cmisService.getDocument(id);
         InputStreamResource resource = new InputStreamResource(document.getContentStream().getStream());
         System.out.println(resource);
@@ -60,13 +59,19 @@ public class AlfrescoApi {
                 .body(resource);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/api/doc/search")
+    public List<Map<String, String>> getByAttributeParam(@RequestParam(value="key") String name) {
+        log.info("get docs by name {}", name);
+        return cmisService.getDocumentsByName(name);
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/api/doc")
     public String create(@RequestBody MultipartFile file) {
         String name = file.getOriginalFilename();
         log.info("create doc {}", name);
         Folder rootFolder = cmisService.getFolder();
-        String contentType = file.getContentType();
         Document document = cmisService.createDocument(rootFolder, name, file);
         return document.getId();
     }

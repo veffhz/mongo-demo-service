@@ -1,8 +1,6 @@
 package com.rasse.mongodemoservice.service.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,12 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
 import javax.annotation.PostConstruct;
 
 import com.rasse.mongodemoservice.service.CmisService;
 
 import lombok.extern.slf4j.Slf4j;
+
 import org.apache.chemistry.opencmis.client.api.*;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -155,6 +153,23 @@ public class CmisServiceImpl implements CmisService {
         } else {
             object.delete(true);
         }
+    }
+
+    public List<Map<String, String>> getDocumentsByName(String name) {
+        String query = String.format("cmis:name LIKE '%s%s'", name, "%");
+        OperationContext context = session.createOperationContext();
+        ItemIterable<CmisObject> results =
+                session.queryObjects("cmis:document", query, false, context);
+
+        return StreamSupport.stream(results.spliterator(), true)
+                .map(obj -> {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("id", obj.getId());
+                    map.put("name", obj.getName());
+                    map.put("createdBy", obj.getCreatedBy());
+                    map.put("description", obj.getDescription());
+                    return map;
+                }).collect(Collectors.toList());
     }
 
     @Override
